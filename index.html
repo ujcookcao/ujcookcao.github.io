@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artistic Page</title>
+    <script>
+      let titlesize = 0;
+      window.addEventListener("load", init);
+
+      function init() {
+        let title = document.getElementById("title");
+        let haimianbb01 = document.getElementById("haimianbb01");
+        let haimianbb02 = document.getElementById("haimianbb02");
+        let haimianbb03 = document.getElementById("haimianbb03");
+        let haimianbb04 = document.getElementById("haimianbb04");
+        title.addEventListener("mouseover", function () {
+          while (titlesize < 100) {
+            titlesize += 1;
+            title.style.fontSize = 100 + titlesize + "px";
+
+            timer = setTimeout(function () {
+              haimianbb01.style.display = "block";
+              haimianbb02.style.display = "block";
+              haimianbb03.style.display = "block";
+              haimianbb04.style.display = "block";
+            }, 3000); // 3000毫秒 = 3秒
+          }
+        });
+        title.addEventListener("mouseout", function () {
+          while (titlesize > 0) {
+            titlesize -= 1;
+            title.style.fontSize = 100 + titlesize + "px";
+          }
+          clearTimeout(timer);
+          haimianbb01.style.display = "none";
+          haimianbb02.style.display = "none";
+          haimianbb03.style.display = "none";
+          haimianbb04.style.display = "none";
+        });
+      }
+    </script>
+    <style>
+      body,
+      html {
+        height: 150%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+        background-image: url("https://5b0988e595225.cdn.sohucs.com/images/20200513/879d7e006e99413a8dc0c6b29fc0193b.jpeg");
+        background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+      }
+
+      .main-title {
+        font-size: 100px;
+        color: #f0e21a;
+        transform: rotate(-10deg);
+        position: absolute;
+        font-size: Helvetica;
+        text-shadow: 20px -30px 12px rgb(0, 74, 124);
+        font-weight: 600;
+        z-index: 100;
+        transition: 3s;
+      }
+
+      .placeholder {
+        width: 100px;
+        height: 100px;
+        background-color: #bbb;
+        position: absolute;
+      }
+
+      #top-left {
+        position: absolute;
+        top: 90vh;
+        right: 0px;
+        width: 60vw;
+        height: 80vw;
+        z-index: 10;
+        opacity: 0.6;
+      }
+
+      #top-right {
+        top: 10px;
+        right: 10px;
+      }
+
+      #xielaoban {
+        position: absolute;
+        top: 60vh;
+        right: 0px;
+        width: 60vw;
+        height: 80vw;
+        z-index: 10;
+        opacity: 0.5;
+      }
+
+      #paidaxinhehaimianbb {
+        position: absolute;
+        top: 10vh;
+        right: 30vw;
+        width: 20vw;
+        height: 20vw;
+        z-index: 10;
+        opacity: 0.5;
+      }
+
+      #haimianbb01 {
+        position: absolute;
+        top: 0vh;
+        left: 0vw;
+        width: 50vw;
+        height: 50vw;
+        z-index: 20;
+        opacity: 0.9;
+        display: none;
+      }
+
+      #haimianbb02 {
+        position: absolute;
+        top: 80vh;
+        left: 0vw;
+        width: 30vw;
+        height: 30vw;
+        z-index: 20;
+        opacity: 0.9;
+        display: none;
+      }
+
+      #haimianbb03 {
+        position: absolute;
+        top: 100vh;
+        left: 50vw;
+        width: 30vw;
+        height: 30vw;
+        z-index: 20;
+        opacity: 0.9;
+        display: none;
+      }
+
+      #haimianbb04 {
+        position: absolute;
+        top: 120vh;
+        left: 10vw;
+        width: 50vw;
+        height: 50vw;
+        z-index: 50;
+        opacity: 0.9;
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="title" class="main-title">SpongeBob</div>
+    <img
+      id="xielaoban"
+      src="https://5b0988e595225.cdn.sohucs.com/images/20191209/f1a478f4b028492e8255a2856d6671e4.gif"
+    />
+    <img
+      id="paidaxinhehaimianbb"
+      src="https://5b0988e595225.cdn.sohucs.com/images/20191209/df93853f07594f93ae1bc131cf599590.gif"
+    />
+    <img
+      id="haimianbb01"
+      src="https://5b0988e595225.cdn.sohucs.com/images/20191209/93a6a20c868f4cacb607c51f3d52861e.gif"
+      alt=""
+    />
+    <img
+      id="haimianbb02"
+      src="https://5b0988e595225.cdn.sohucs.com/images/20191209/fc54fd0325fb4bbe88751a1c7f3b9783.gif"
+      alt=""
+    />
+    <img
+      id="haimianbb03"
+      src="https://5b0988e595225.cdn.sohucs.com/images/20191209/d63224dc3cf8404c82ed05a2844fd3c6.gif"
+      alt=""
+    />
+    <img
+      id="haimianbb04"
+      src="https://5b0988e595225.cdn.sohucs.com/images/20191209/0e26211ce4854d3db69ad800a38dc2bf.gif"
+      alt=""
+    />
+  </body>
+</html>
