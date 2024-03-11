@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="styles.css" />
+	<title>Chat Room</title>
+	<style>
+		#TV {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 60vw;
+			/* 电视屏幕的宽度，根据需要调整 */
+			height: 45vw;
+			/* 电视屏幕的高度，这里使用宽高比16:9 */
+			background-color: black;
+			/* 电视外壳颜色 */
+			border-radius: 20px;
+			/* 给电视外壳添加圆角 */
+			box-shadow: 0 0 20px #000;
+			/* 为电视添加一些阴影，让它更有立体感 */
+			margin: auto;
+			/* 水平垂直居中 */
+			position: relative;
+			/* 为了能够让canvas绝对定位于电视中心 */
+			overflow: hidden;
+			/* 防止canvas溢出电视屏幕 */
+
+			background-image: url("TV.png");
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: top;
+			text-align: center;
+			z-index: 50;
+
+		}
+
+		#thecanvas {
+			border-radius: 20px;
+			/* 给电视外壳添加圆角 */
+			width: 35%;
+			animation: myAnim 5s linear 0s infinite;
+		}
+
+		ul {
+			width: 98%;
+
+			padding: 0;
+			margin-top: 10px;
+
+		}
+
+		li {
+			margin-top: 10px;
+			padding: 10px;
+			font-size: 20px;
+			font-weight: bold;
+			color: aqua;
+			background-color: rgb(240, 148, 202);
+			text-shadow: 10px -10px 2x rgb(0, 74, 124);
+		}
+
+
+		/* input{
+		color: white;
+	  } */
+	</style>
+	<!-- 弹幕code------------------------------------------------------------------------->
+	<title>Week4</title>
+	<link rel="icon"
+		href="https://pic.baike.soso.com/ugc/baikepic2/0/20221008142127-2122750522_png_900_1050_173988.jpg/800"
+		type="image/png">
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script src="../parallax.js"></script>
+	<!-- <script src="music.js"></script> -->
+	<script type="text/javascript">
+		var fillcolor;
+		var texts = ["Hi"];
+		fillcolor = "rgba(255, 0, 0, 0.5)";
+		var transparency = 0.5;
+		let increasing = true;
+		var randomIndex = 0;
+		var enrangestatus = 0;
+		var enragelevelindex1 = 3;
+		let zhenziwords = [
+			"love", "admire", "delight", "pleased", "pleasing",
+			"appreciate", "appreciation", "sweet", "sweetness", "joy",
+			"happiness", "happy", "enjoy", "enjoyment", "serenity",
+			"peace", "calm", "calmness", "affection", "affectionate",
+			"kindness", "kind", "gentle", "gentleness", "warmth",
+			"compassion", "empathy", "supportive", "support", "care",
+			"caring", "cherish", "valuable", "precious", "admiration",
+			"respect", "respectful", "esteem", "adore", "adoration",
+			"gratitude", "thankful", "blessing", "blessed", "grace",
+			"gracious", "optimism", "optimistic", "uplift", "uplifting", "hate", "dislike", "disgust", "disgusted", "disgusting",
+			"anger", "angry", "annoy", "annoyed", "annoying",
+			"resent", "resentment", "bitter", "bitterness", "rage",
+			"fury", "irate", "irritation", "hostile", "hostility",
+			"scorn", "contempt", "detest", "detestation", "loathe",
+			"loathing", "revulsion", "revolt", "abhor", "abhorrence",
+			"antipathy", "malice", "spite", "spiteful", "malevolence",
+			"malign", "malignant", "venom", "venomous", "vicious",
+			"rancor", "wrath", "scornful", "repugnance", "repugnant",
+			"aversion", "animosity", "animus", "enmity", "jealousy"
+
+		];
+
+		window.addEventListener('load', function () {
+
+			let video = document.getElementById('thevideo');
+			let thecanvas = document.getElementById('thecanvas');
+			let zhenzivideo = document.getElementById("zhenzivideo");
+			let thecontext = thecanvas.getContext("2d");
+
+			// Constraints - what do we want?
+			let constraints = { audio: true, video: true };
+			// Prompt the user for permission, get the stream
+			navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+				/* Use the stream */
+
+				// Attach to our video object
+				video.srcObject = stream;
+
+				// Wait for the stream to load enough to play
+				video.onloadedmetadata = function (e) {
+					video.play();
+					setInterval(function () {
+
+						thecontext.drawImage(video, 0, 0, thecanvas.width, thecanvas.height);
+
+						// 设置滤镜颜色并绘制矩形
+						thecontext.fillStyle = fillcolor;
+						//.log("filled color is: " + fillcolor);
+						thecontext.fillRect(0, 0, thecanvas.width, thecanvas.height);
+
+						if (enrangestatus == 20) {
+							// 显示全屏视频容器
+							enrangedvideo();
+							enrangestatus = 0;
+							
+						} else {
+							// 隐藏全屏视频容器
+							//document.getElementById('fullscreen').style.display = "none";
+						}
+
+						thecontext.font = '100px Arial';
+						thecontext.fillStyle = "white"; // 设置文本颜色
+						thecontext.textAlign = 'center'; // 设置文本对齐方式
+						var index = texts.length;
+						thecontext.fillText(texts[index - 1], thecanvas.width / 2, thecanvas.height * 9 / 10);
+						if (texts.length > 0) {
+							texts.forEach((item, index) => {
+								thecontext.fillText(item.text, thecanvas.width / 2, item.y);
+								item.y += 2;
+								if (item.y > thecanvas.height) {
+									texts.splice(index, 1);
+								}
+							});
+						};
+
+						//zhenzhi's words
+
+						thecontext.font = "100px Georgia";
+						thecontext.fillStyle = thecontext.fillStyle = `rgba(255, 0, 0, ${transparency})`;
+
+						if (increasing) {
+							transparency += 0.01;
+							if (transparency >= 1) {
+								increasing = false;
+							}
+						} else {
+							transparency -= 0.01;
+							if (transparency <= 0.5) {
+								increasing = true;
+							}
+						}
+
+						thecontext.fillText(zhenziwords[randomIndex], thecanvas.width / 2, thecanvas.height / 2);
+
+					}, 1);
+				};
+			})
+				.catch(function (err) {
+					/* Handle the error */
+					alert(err);
+				});
+		});
+
+		function rangelevel_1() {
+			document.getElementById('rangelevel_1').play();
+			
+		}
+		function enrangedvideo() {
+			document.getElementById('fullscreen').style.display = "flex";
+			zhenzivideo.play();
+			bgm1.pause();
+			var covercute = document.getElementById('covercute');
+			var coverText = document.getElementById('coverText');
+			zhenzivideo.addEventListener('ended', function () {
+				while (texts.length > 0) {
+					texts.pop();
+				}
+				document.getElementById('fullscreen').style.display = "none";
+			
+
+				covercute.style.display = 'flex';
+				cutemusic.play();
+				setTimeout(function () {
+					coverText.style.fontSize = "25px";
+					coverText.innerHTML = "One night, as I was lounging in front of the TV, the screen flickered and, to my disbelief, Sadako emerged. Contrary to the tales, she didn't evoke fear but curiosity. We ended up watching a comedy, laughing together at the absurdities. When we switched to playing video games, her competitiveness was both surprising and endearing. The battle for the last chip in the bag turned into a playful tussle, leaving us laughing on the floor.As days passed, I found myself drawn to her. Sadako, with her unique perspective on life and quirky sense of humor, became someone I eagerly awaited to see each evening. Our shared moments, from intense gaming sessions to silent companionship while watching TV, felt incredibly special. The fear that once might have consumed me was replaced with affection. I had fallen for Sadako, a ghost, who made every moment lively and filled my world with an unexpected sweetness. Her presence turned my once mundane life into a series of unforgettable memories, teaching me the essence of love in the most unusual way."
+				}, 6000
+				
+
+				);
+				setTimeout(function () {
+				document.getElementById('covercute').style.display = 'none';
+				cutemusic.pause();
+				bgm1.play();
+				bgm1.volume = 0.1;
+				coverText.style.fontSize = "2em";
+				coverText.innerHTML = "Sadako is too cute to harm you. She's just lonely at the bottom of the well, longing for some companionship.";
+				}, 66000
+				);
+			}, 66000
+			);
+			}
+		
+
+
+
+		let submit;
+		window.addEventListener('load', function () {
+			submit = document.getElementById('submit');
+			submit.addEventListener('click', function (event) {
+				event.preventDefault(); // 阻止表单提交的默认行为
+				let data = {
+					message: document.getElementById('message').value,
+					color: document.getElementById('color').value
+				};
+				socket.emit('chatmessage', data);
+			})
+			let clearchat = document.getElementById('clearchat');
+			clearchat.addEventListener('click', function () {
+				document.getElementById('messages').innerHTML = "";
+				socket.emit('clearchat', {});
+			})
+
+			document.addEventListener('click', function () {
+				socket.emit('click', {});
+			})
+
+		})
+
+
+		var socket = io.connect();
+
+		socket.on('connect', function () {
+			console.log("Connected");
+		});
+
+		socket.on('v', function (data) {
+			document.getElementById('theimage').src = data;
+		});
+
+		socket.on('click', function () {
+			//console.log('Got a click');
+			document.body.style.backgroundColor = fillcolor;
+			setTimeout(function () {
+				document.body.style.backgroundColor = "#ffffff";
+			}, 100);
+		});
+
+		// Receive from any event
+		socket.on('chatmessage', function (data, serverenrangestatus) {
+
+			let newelement = document.createElement('div');
+			let chat = document.getElementById('Chat');
+			enrangestatus = serverenrangestatus;
+			newelement.style.color = data.color;
+			fillcolor = data.color;
+			fillcolor = hexToRGBA(fillcolor, 0.5);
+			//console.log("type of fillcolor: " + typeof (fillcolor));
+			newelement.innerHTML = data.message + data.color;
+			// chat.appendChild(newelement);
+			texts.push(data.message);
+			randomIndex = Math.floor(Math.random() * zhenziwords.length);
+			console.log("texts: " + texts);
+			if (bgm1.paused) {
+				bgm1.play();
+			}
+			if (enrangestatus == enragelevelindex1) {
+				console.log("enranged");
+				if (rangelevel1.paused) {
+					rangelevel_1();
+				}
+			} else if (enrangestatus == -20) {
+				enrangestatus = 0;
+			}
+			console.log(enrangestatus);
+			if (bgm1.volume + enrangestatus / 100 > 0) {
+				bgm1.volume += enrangestatus / 100;
+			}
+			if(enrangestatus == enragelevelindex1){
+
+			scene.style.opacity = 1;
+			}else if(enrangestatus >= enragelevelindex1){
+			while(scene.style.opacity >= 0.4){
+				scene.style.opacity -= 0.1;
+			}
+			}
+
+		});
+
+		socket.on('clearchat', function (data) {
+			console.log("clearchat")
+			document.getElementById('messages').innerHTML = "";
+		});
+
+		socket.on("enranged", function (data) {
+			enrangedvideo();
+			console.log(data.enrangestatus);
+		}
+		);
+
+		function hexToRGBA(hex, alpha = 1) {
+			// 移除十六进制颜色的前缀（如果存在）
+			hex = hex.replace('#', '');
+			let r, g, b;
+
+			// 处理三位十六进制颜色
+			if (hex.length === 3) {
+				r = parseInt(hex[0] + hex[0], 16);
+				g = parseInt(hex[1] + hex[1], 16);
+				b = parseInt(hex[2] + hex[2], 16);
+			}
+			// 处理六位十六进制颜色
+			else if (hex.length === 6) {
+				r = parseInt(hex.substring(0, 2), 16);
+				g = parseInt(hex.substring(2, 4), 16);
+				b = parseInt(hex.substring(4, 6), 16);
+			}
+			// 返回 rgba 颜色字符串
+			return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+		}
+	</script>
+</head>
+<style>
+	#messages {
+		width: 100%;
+		height: 30px;
+		text-align: center;
+		font-size: 20px;
+	}
+
+	body {
+		margin: 0;
+		padding: 0;
+	}
+
+	.container {
+		width: 100%;
+		height: 100vh;
+		overflow: hidden;
+		background-attachment: fixed;
+	}
+
+	#fullscreen {
+		position: fixed;
+		/* 使用fixed定位使得容器固定覆盖整个屏幕 */
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background-color: black;
+		/* 可选：为了视频加载时提供背景色 */
+		display: none;
+		/* 初始状态不显示，将通过JavaScript来控制显示 */
+		z-index: 1000;
+		/* 确保视频覆盖其他内容 */
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+	}
+
+	#zhenzivideo {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	#scene {
+		position: fixed;
+		top: 0;
+		left: 30vw;
+		z-index: 1000;
+		opacity: 0;
+
+
+	}
+	#covercute {
+    display: none; /* 初始不显示 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('cutezhenzi.jpg') center / cover no-repeat; /* 背景图片 */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 2000; /* 确保覆盖其他内容 */
+}
+
+#coverText {
+    font-size: 2em;
+    color: white; /* 文字颜色 */
+    width: 80%; /* 控制文字宽度 */
+    background-color: rgba(0, 0, 0, 0.5); /* 文字背景 */
+    padding: 20px;
+    border-radius: 10px;
+}
+#instruction {
+	display: flex;
+    justify-content: center; /* 水平居中 */
+
+}
+#instructiontext {
+    position: relative;
+	width: 50%; /* 或者任何具体的宽度 */
+    margin: 0 auto; /* 上下外边距为0，左右外边距自动调整 */
+    z-index: 1900; /* 确保覆盖其他内容 */
+	font-size: 2em;
+    color: white; /* 文字颜色 */
+    width: 80%; /* 控制文字宽度 */
+    background-color: rgba(0, 0, 0, 0.5); /* 文字背景 */
+    padding: 20px;
+    border-radius: 10px;
+}
+.center-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+			font-size: 2em;
+    color: white; /* 文字颜色 */
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        form input, form button {
+            margin: 5px;
+        }
+</style>
+
+<body>
+	<div id="scene" class="scene">
+		<div data-depth="1.50"><img src="zhenzifloating.webp"></div>
+		<div data-depth="1.20"><img src="zhenzifloating.webp"></div>
+		<div data-depth="1.00"><img src="zhenzifloating.webp"></div>
+		<div data-depth="0.8"><img src="zhenzifloating.webp"></div>
+		<div data-depth="0.6"><img src="zhenzifloating.webp"></div>
+		<div data-depth="0.4"><img src="zhenzifloating.webp"></div>
+
+	</div>
+	<div id="messages">
+		Sado
+	</div>
+
+	<video id="thevideo" muted style="display: none;"></video>
+	<div id="fullscreen">
+
+		<video id="zhenzivideo" src="zhenzivideo.mp4"></video>
+	</div>
+	<div id="TV">
+		<canvas id="thecanvas" width="600" height="450"></canvas>
+	</div>
+	<div class="center-form">
+        <form action="">
+            Chat to the TV:<input type="text" id="message" name="message">
+            Choose a color u like for ur TV if u want: <input type="color" id="color">
+            <input id="submit" type="submit" value="submit">
+            <!-- <input id="clearchat" type="submit" value="clear"> -->
+        </form>
+    </div>
+
+	</div>
+	<div id="Chat"></div>
+
+	<div id="instruction">
+		<p id="instructiontext"> Your TV seems a bit odd tonight, emitting sporadic bursts of static noise, with blood-red text appearing on the screen. It seems you can't escape your room, so you attempt to communicate with the TV through text. You discover that different words elicit different reactions from the "entity" within the television. Now, try to communicate with the creature in the TV and attempt to unravel the mystery.</p>
+
+	</div>
+	
+	<div id="covercute">
+		<p id="coverText">Sadako is too cute to harm you. She's just lonely at the bottom of the well, longing for some companionship.</p>
+	</div>
+
+	<script>
+		var container = document.getElementById('scene');
+		var parallaxInstance = new Parallax(scene);
+		var increase = true;
+
+		
+	</script>
+	<audio id="bgm1" src="./music/bgm1.wav"></audio>
+	<!-- <audio id="submit_vol" src="submit_vol.mp3" controls></audio> -->
+	<audio id="rangelevel_1" src="./music/rangelevel_1.mp3"></audio>
+	<audio id="cutemusic" src="./music/cutemusic.mp3">
+	<script>
+		var bgm1 = document.getElementById("bgm1");
+		var rangelevel1 = document.getElementById("rangelevel_1");
+		var cutemusic = document.getElementById("cutemusic");
+		cutemusic.volume = 0.5;
+		cutemusic.loop = false;
+		bgm1.volume = 0.01;
+		bgm1.loop = true;
+		rangelevel1.volume = 0.3;
+		rangelevel1.loop = false;
+	</script>
+</body>
+
+</html>
